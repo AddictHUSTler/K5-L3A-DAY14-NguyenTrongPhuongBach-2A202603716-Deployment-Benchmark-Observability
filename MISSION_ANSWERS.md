@@ -282,6 +282,8 @@ PASS 12/12 - PRODUCTION READY!
 - Part 4: asked Claude Code to run the develop and production gateways and draft this section. The curl outputs are from those runs; I checked the line numbers in the code.
 - Part 5: asked Claude Code to run the develop app (health, ready, SIGTERM test) and the 3-instance compose stack with `test_stateless.py` and an instance-stop test, and draft this section. All outputs are from those runs.
 - Part 6: asked Claude Code to fill the `TODO`s in `06-lab-complete/` and run `check_production_ready.py`. I read each file and the script output; the result above is from that run.
+- Part 3: asked Claude Code to walk me through the Render Blueprint deploy and to add a root `render.yaml`, then run the 4 curl checks against the public URL. I did the deploy and took the screenshots myself; the status codes are from those runs.
+- Part 7: asked Claude Code to run the load tests, evals, the Docker observability stack, the Locust scale runs and the two alert experiments, to find the traces in Jaeger and to fix the `production/Dockerfile` (it crashed with `No module named uvicorn`), and to fill `BENCHMARK_REPORT.md`. All numbers come from the JSON/CSV files and my screenshots. I took the screenshots myself. Alert times in 4.2 were measured by polling Prometheus every 5 s.
 
 ## Part 3: Cloud Deployment
 
@@ -304,3 +306,17 @@ Bảng concurrency 1/10/50/100 và so sánh `MOCK_SLOW_RATE` 0/0.03/0.1 nằm �
 ### Exercise 7.3 — Eval & quality gate
 - v1 4.3%, v2 91.3%, v2 sau sửa KB 100% (0 regression, `Quality gate ✅ PASS`). Hai câu sai ban đầu (`security-02`, `scaling-03`) và cách sửa: mục 3 của `BENCHMARK_REPORT.md`; sửa trong `develop/utils/mock_llm.py`.
 - CI: [.github/workflows/eval.yml](.github/workflows/eval.yml) chạy agent v2 rồi `run_eval.py --min-accuracy 0.85`. Script thoát exit code 1 khi accuracy dưới ngưỡng hoặc có regression, nên job fail và PR bị chặn merge (khi bật branch protection yêu cầu check này).
+
+### Exercise 7.4 — Observability stack
+Số liệu đọc từ `screenshots/grafana-dashboard.png` (lúc chạy thí nghiệm B, `MOCK_SLOW_RATE=0.3`, 30 user).
+1. p95 ≈ 1.9 s, p50 ≈ 0.2 s, avg ≈ 0.7–0.9 s (đọc ước từ đồ thị). avg cách xa p95 nghĩa là phân bố lệch: đa số request nhanh, một nhóm nhỏ rất chậm kéo đuôi. Avg che nhóm này, p95/p99 thì lộ ra.
+2. Chưa chụp panel "Requests/s theo instance" nên không có số đo. Theo cấu hình, `nginx.conf` dùng upstream `agent_cluster` mặc định (round-robin, không `least_conn`) và `server agent:8000 resolve`, nên về lý thuyết chia đều cho các instance.
+3. Mỗi lần gọi LLM, input gồm câu hỏi và đoạn context lấy từ knowledge base, còn output chỉ là câu trả lời ngắn. Log `llm_call` của mình: `input_tokens: 74`, `output_tokens: 37`.
+4. `curl http://localhost:8080/metrics` trả **404**: `nginx.conf` có `location = /metrics { return 404; }` để không lộ metric ra ngoài. Prometheus scrape thẳng từng agent trong mạng nội bộ.
+
+### Exercise 7.5 — Tracing
+Trace chậm `532a78a475a53752340e42033dd921e2`: 1722 ms, span `chat mock-llm-small` chiếm 1694 ms (~98%), `agent.retrieve_context` chỉ 25 ms. Trace lỗi `12bae23c20fa0e22471bf265622dcf56`: span LLM có event `exception` (`Upstream LLM error: 503`). Cả hai có dòng log JSON cùng `trace_id` (chi tiết ở mục 4.3 của `BENCHMARK_REPORT.md`).
+
+### Exercise 7.6 — Alerts
+Đã chạy `promtool test rules` (SUCCESS) và 2 thí nghiệm: Mỗi thí nghiệm chạy riêng trên stack mới, baseline không có alert nào, đo bằng polling Prometheus mỗi 5 s từ lúc đổi cấu hình: A (`MOCK_ERROR_RATE=0.2`) → `AgentHighErrorRate` firing sau 98 s; B (`MOCK_SLOW_RATE=0.3`) → `AgentHighLatencyP95` firing sau 142 s; D (`docker pause` 1 instance) → `AgentInstanceDown` firing sau 45 s. Alert chờ `for: 1m` / `2m` / `30s` nên không firing ngay. Lỗi 504 do Nginx (thấy ở một lần chạy trước) không hiện trong metric của agent.
+Với `AGENT_VERSION=v1` không alert nào firing vì lỗi/latency vẫn bình thường, chỉ câu trả lời sai. Loại sự cố này cần eval định kỳ trên golden dataset (CI hoặc cron) và feedback người dùng.

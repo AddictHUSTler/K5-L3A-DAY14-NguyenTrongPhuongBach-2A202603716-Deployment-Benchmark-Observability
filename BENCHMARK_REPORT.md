@@ -78,17 +78,21 @@
 
 | # | Thay đổi | Alert nào firing | Thời gian từ lúc đổi → firing | Panel nào phản ánh rõ nhất |
 |---|---|---|---|---|
-| A | `MOCK_ERROR_RATE=0.2` | `AgentHighErrorRate` | ~105 s (gồm ~45 s agent restart + cửa sổ rate, rồi `for: 1m`) | Error rate (503) |
-| B | `MOCK_SLOW_RATE=0.3` | `AgentHighLatencyP95` | ~142 s (pending ở ~20 s, `for: 2m`) | p95/p99 latency |
+| A | `MOCK_ERROR_RATE=0.2` | `AgentHighErrorRate` | 98 s (pending ở 33 s, `for: 1m`) | Error rate (503) |
+| B | `MOCK_SLOW_RATE=0.3` | `AgentHighLatencyP95` | 142 s (pending ở 21 s, `for: 2m`) | p95/p99 latency |
 | C | `LLM_MODEL=mock-llm-large` | không làm (chỉ yêu cầu ≥ 2) | - | - |
-| D | `docker pause` 1 instance | không làm | - | - |
+| D | `docker pause` 1 instance | `AgentInstanceDown` | 45 s (pending ở 15 s, `for: 30s`) | Instances up: 2 → 1 |
 | E | `AGENT_VERSION=v1` | không làm (theo README: không alert nào) | - | - |
 
 **Thí nghiệm E không làm alert nào firing. Bạn sẽ phát hiện loại sự cố này trong production bằng cách nào?**
 
 Metric hạ tầng (error rate, latency) vẫn xanh nên không alert nào bắt được. Phải chạy eval trên golden dataset định kỳ (cron/CI) và alert khi accuracy tụt dưới SLO 85%; thêm feedback của người dùng (thumbs up/down) và metric như retrieval hit ratio.
 
-(Lưu ý: `LLMCostBurnRateHigh` cũng firing trong lúc chạy A/B, do tải Locust 100 user chạy trước đó, không phải do thí nghiệm C.)
+Mỗi thí nghiệm A, B, D chạy riêng trên stack mới (`docker compose down -v` rồi `up`), tải Locust 30 user, baseline không có alert nào firing; thời gian đo bằng polling Prometheus mỗi 5 s từ lúc đổi cấu hình.
+
+Thí nghiệm D: pause 1 trong 2 instance, `AgentInstanceDown` (`up == 0`) firing sau 45 s trong khi alert error rate của agent vẫn không firing. Lần chạy này 30 request qua Nginx đều trả 200 (Nginx có `proxy_next_upstream` nên thử lại instance còn sống). Ở một lần chạy trước (baseline chưa sạch) mình thấy 1/20 request trả 504 từ Nginx: lỗi 504 sinh ra ở Nginx, request chưa được agent xử lý xong nên metric của agent không đếm. Vì vậy cần giám sát ở tầng load balancer hoặc synthetic check bên ngoài, chứ không chỉ metric của agent.
+
+(Lưu ý: `LLMCostBurnRateHigh` cũng firing trong lúc chạy A/B, do tải Locust 100 user chạy trước đó trong lần chạy đầu, không phải do thí nghiệm C. Ở các lần chạy riêng từng thí nghiệm, baseline không có alert nào.)
 
 ### 4.3 Debug bằng trace
 
