@@ -12,7 +12,7 @@
 
 ### ⚠️ Lưu ý khi làm bài (K5)
 
-Tài liệu gốc giữ nguyên. Vài chỗ dưới đây lệch nhau hoặc dễ làm sai, đọc trước khi bắt đầu:
+Lớp K5 làm khác `CODE_LAB.md` và `DAY14_DELIVERY_CHECKLIST.md` ở vài chỗ dưới đây. Đọc trước khi bắt đầu:
 
 1. **Code Part 6 nằm trong `06-lab-complete/`.** Làm ngay trong thư mục đó của bản fork. Bỏ qua cây thư mục `app/` ở gốc repo vẽ trong [DAY14_DELIVERY_CHECKLIST.md](DAY14_DELIVERY_CHECKLIST.md) mục 2.
 2. **Part 3 deploy luôn agent Part 6** (xem [CHECKPOINTS.md](CHECKPOINTS.md), CP6). Khi làm theo Exercise 3.1/3.2 trong `CODE_LAB.md`, bỏ các lệnh `cd ../../03-cloud-deployment/...` và chạy trong `06-lab-complete/` (Railway: `cd 06-lab-complete && railway up`; Railway CLI cài bằng `npm`, cần Node.js). Agent cần Redis trên cloud: tạo một Redis trên nền tảng, đặt `REDIS_URL` của service agent trỏ tới nó, kiểm `/ready` trả 200 trước khi chụp ảnh. Dùng Render thì `render.yaml` nằm trong thư mục con và phải tự khai báo Redis; kẹt thì hỏi Lab Coach.
