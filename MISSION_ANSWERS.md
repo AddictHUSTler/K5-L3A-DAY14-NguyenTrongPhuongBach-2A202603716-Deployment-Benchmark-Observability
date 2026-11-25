@@ -286,7 +286,7 @@ PASS 12/12 - PRODUCTION READY!
 ## Part 3: Cloud Deployment
 
 ### Exercise 3.2: Render deployment (agent from `06-lab-complete/`)
-- URL: https://TODO.onrender.com
+- URL: https://agent-n0nl.onrender.com
 - Screenshot: [dashboard](screenshots/dashboard.png), [test](screenshots/test.png)
 
 ## Part 7: Benchmark & Observability (Bước 1, local)

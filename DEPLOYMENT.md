@@ -1,7 +1,7 @@
 # Deployment Information
 
 ## Public URL
-https://TODO.onrender.com
+https://agent-n0nl.onrender.com
 
 ## Platform
 Render (Docker, `06-lab-complete/render.yaml`) + Render Key Value (Redis)
@@ -9,7 +9,7 @@ Render (Docker, `06-lab-complete/render.yaml`) + Render Key Value (Redis)
 ## Test Commands
 
 ```bash
-BASE=https://TODO.onrender.com
+BASE=https://agent-n0nl.onrender.com
 curl -sS -o /dev/null -w '%{http_code}\n' "$BASE/health"   # 200
 curl -sS -o /dev/null -w '%{http_code}\n' "$BASE/ready"    # 200
 curl -sS -o /dev/null -w '%{http_code}\n' -X POST "$BASE/ask" -H 'Content-Type: application/json' -d '{"question":"Hello"}'   # 401
