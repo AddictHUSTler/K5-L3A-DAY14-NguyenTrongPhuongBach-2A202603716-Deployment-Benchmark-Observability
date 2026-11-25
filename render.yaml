@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: agent
+    runtime: docker
+    plan: free
+    dockerfilePath: ./06-lab-complete/Dockerfile
+    dockerContext: ./06-lab-complete
+    healthCheckPath: /health
+    envVars:
+      - key: AGENT_API_KEY
+        generateValue: true
+      - key: ENVIRONMENT
+        value: production
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: agent-redis
+          property: connectionString
+
+  - type: keyvalue
+    name: agent-redis
+    plan: free
+    ipAllowList: []
+    maxmemoryPolicy: noeviction
