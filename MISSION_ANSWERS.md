@@ -320,7 +320,7 @@ Bảng concurrency 1/10/50/100 và so sánh `MOCK_SLOW_RATE` 0/0.03/0.1 nằm �
 ### Exercise 7.4 — Observability stack
 Số liệu đọc từ `screenshots/grafana-dashboard.png` (lúc chạy thí nghiệm B, `MOCK_SLOW_RATE=0.3`, 30 user).
 1. p95 ≈ 1.9 s, p50 ≈ 0.2 s, avg ≈ 0.7–0.9 s (đọc ước từ đồ thị). avg cách xa p95 nghĩa là phân bố lệch: đa số request nhanh, một nhóm nhỏ rất chậm kéo đuôi. Avg che nhóm này, p95/p99 thì lộ ra.
-2. Chưa chụp panel "Requests/s theo instance" nên không có số đo. Theo cấu hình, `nginx.conf` dùng upstream `agent_cluster` mặc định (round-robin, không `least_conn`) và `server agent:8000 resolve`, nên về lý thuyết chia đều cho các instance.
+2. Chạy `docker compose -p k5-day14-observability up -d --scale agent=3`, rồi Locust headless 30 user trong 90 s (khoảng 20 req/s). Truy vấn của panel "Requests/s theo instance" (`sum by (instance) (rate(http_requests_total{route="/ask"}[1m]))`) trên Prometheus cho: 5.98, 6.11 và 6.05 req/s ở ba instance, mỗi instance khoảng 1/3 tổng tải. Nginx dùng round-robin mặc định (`upstream agent_cluster`, không `least_conn`) nên chia đều. Số đo lấy bằng truy vấn Prometheus, không chụp ảnh panel.
 3. Mỗi lần gọi LLM, input gồm câu hỏi và đoạn context lấy từ knowledge base, còn output chỉ là câu trả lời ngắn. Log `llm_call` của mình: `input_tokens: 74`, `output_tokens: 37`.
 4. `curl http://localhost:8080/metrics` trả **404**: `nginx.conf` có `location = /metrics { return 404; }` để không lộ metric ra ngoài. Prometheus scrape thẳng từng agent trong mạng nội bộ.
 
