@@ -6,7 +6,7 @@
 Lộ trình trong `CODE_LAB.md` dài 335 phút (Part 1–7). Để vừa 240 phút, lớp K5 làm khác ba điểm:
 
 1. Rút ngắn Part 1, 2, 4, 5: chạy ví dụ có sẵn và trả lời câu hỏi vào `MISSION_ANSWERS.md`, không tự viết lại code mẫu.
-2. Đưa **Part 3 (deploy) ra sau Part 6** và deploy luôn agent Part 6, thay vì deploy app mẫu trong `03-cloud-deployment/` rồi deploy lại lần nữa. Exercise 3.3 (Cloud Run) là tuỳ chọn, bỏ qua.
+2. Đưa **Part 3 (deploy) ra sau Part 6** và deploy luôn agent Part 6, thay vì deploy app mẫu trong `03-cloud-deployment/` rồi deploy lại lần nữa. Exercise 3.3 (Cloud Run) không cần deploy: chỉ đọc `cloudbuild.yaml` và `service.yaml` rồi viết 3–5 dòng mô tả pipeline (1 điểm, xem [RUBRIC.md](RUBRIC.md#part-3--cloud-deployment-8-điểm)).
 3. Làm **Part 7 Bước 1** (chạy local, Exercise 7.1–7.3) tại lớp. **Part 7 Bước 2** (Docker stack Grafana/Jaeger/alerts, Exercise 7.4–7.7) làm sau giờ lab, trước deadline.
 
 | Giờ | Checkpoint | Phần trong `CODE_LAB.md` | Thời gian |
