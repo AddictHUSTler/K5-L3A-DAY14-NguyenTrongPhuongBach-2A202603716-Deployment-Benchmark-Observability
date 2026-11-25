@@ -16,7 +16,7 @@
 ## 3. Không được sửa
 
 - `06-lab-complete/check_production_ready.py` (script chấm).
-- `06-lab-complete/benchmark-observability/develop/eval/golden_dataset.jsonl` (bộ câu hỏi eval). Exercise 7.3 sửa `KNOWLEDGE_BASE` trong `utils/mock_llm.py`, không sửa đáp án.
+- `06-lab-complete/benchmark-observability/develop/eval/golden_dataset.jsonl` (bộ câu hỏi eval). Exercise 7.3 sửa `KNOWLEDGE_BASE` trong `06-lab-complete/benchmark-observability/develop/utils/mock_llm.py`, không sửa đáp án.
 
 ## 4. Deadline và nộp muộn
 
@@ -31,4 +31,4 @@
 - Lỡ commit secret: đổi key mới ngay trên dashboard rồi báo Lab Coach. Xoá file thôi chưa đủ, vì secret vẫn nằm trong lịch sử git.
 - Dùng gói miễn phí của Railway hoặc Render. Không bắt buộc nhập thẻ thanh toán; nếu nền tảng đòi thẻ, báo Lab Coach để đổi nền tảng.
 - Xong lab thì tắt stack Docker (`docker compose down -v`). Sau khi đã được chấm có thể xoá service trên cloud.
-- Không ghi email, số điện thoại vào bài. Họ tên và MSSV chỉ nằm ở tên repo.
+- Không ghi email, số điện thoại vào bài. Họ tên và MSSV chỉ ghi ở tên repo và ô Họ tên của `BENCHMARK_REPORT.md`.

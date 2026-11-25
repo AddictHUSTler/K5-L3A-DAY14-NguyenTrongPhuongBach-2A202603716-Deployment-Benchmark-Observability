@@ -19,7 +19,7 @@ Họ tên viết liền, không dấu, viết hoa chữ cái đầu. Repo để 
 2. Vào **Settings → Repository name**, đổi tên theo mẫu trên.
 3. Clone bản fork về máy và làm bài **trong bản fork**, không làm trên repo đề bài.
 
-Làm Part 6 ngay trong `06-lab-complete/` của bản fork, không copy code ra thư mục khác: Lab Coach chạy `check_production_ready.py` và eval tại đúng các đường dẫn này.
+Làm Part 6 ngay trong `06-lab-complete/` của bản fork, không copy code ra thư mục khác: Lab Coach chạy `check_production_ready.py` và eval tại đúng các đường dẫn này. Cây thư mục `app/` ở gốc repo trong `DAY14_DELIVERY_CHECKLIST.md` mục 2 không áp dụng cho lớp K5.
 
 ## Cấu trúc phải nộp
 
@@ -46,8 +46,9 @@ K5-L3A-DAY14-HoVaTen-MSSV-Deployment-Benchmark-Observability/
 `load_test.py`, `run_eval.py` và Locust ghi file ở thư mục chạy lệnh. Trước khi nộp, copy ra gốc repo:
 
 ```bash
-cp -r 06-lab-complete/benchmark-observability/develop/reports ./reports
-cp -r 06-lab-complete/benchmark-observability/production/benchmark-results ./benchmark-results
+mkdir -p reports benchmark-results
+cp -r 06-lab-complete/benchmark-observability/develop/reports/. reports/
+cp -r 06-lab-complete/benchmark-observability/production/benchmark-results/. benchmark-results/
 cp 06-lab-complete/benchmark-observability/BENCHMARK_REPORT_TEMPLATE.md ./BENCHMARK_REPORT.md   # rồi điền
 ```
 

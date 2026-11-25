@@ -6,9 +6,20 @@
 > Repository thực hành đi kèm bài giảng Day 14.  
 > Mỗi phần có ví dụ **cơ bản** (hiểu concept) và **chuyên sâu** (production-ready).
 
-> **Hình thức: CÁ NHÂN** · **Thời lượng:** 4 giờ tại lớp · **Deadline:** 23h59 (GMT+7) ngày lab, trừ khi Lab Coach thông báo khác
-> **Đọc theo thứ tự:** README → [RULES](RULES.md) → [CHECKPOINTS](CHECKPOINTS.md) → [SUBMISSION](SUBMISSION.md) → [RUBRIC](RUBRIC.md)
+> **Hình thức: CÁ NHÂN** · **Thời lượng:** 4 giờ tại lớp · **Deadline:** 23h59 (GMT+7) ngày lab, trừ khi Lab Coach thông báo khác  
+> **Đọc theo thứ tự:** README → [RULES](RULES.md) → [CHECKPOINTS](CHECKPOINTS.md) → [SUBMISSION](SUBMISSION.md) → [RUBRIC](RUBRIC.md)  
 > **Bài nộp:** repo `K5-<L3A|L3B>-DAY14-HoVaTen-MSSV-Deployment-Benchmark-Observability`, nộp **link repo** trên LMS (chi tiết: [SUBMISSION.md](SUBMISSION.md)).
+
+### ⚠️ Lưu ý khi làm bài (K5)
+
+Tài liệu gốc giữ nguyên. Vài chỗ dưới đây lệch nhau hoặc dễ làm sai, đọc trước khi bắt đầu:
+
+1. **Code Part 6 nằm trong `06-lab-complete/`.** Làm ngay trong thư mục đó của bản fork. Bỏ qua cây thư mục `app/` ở gốc repo vẽ trong [DAY14_DELIVERY_CHECKLIST.md](DAY14_DELIVERY_CHECKLIST.md) mục 2.
+2. **Part 3 deploy luôn agent Part 6** (xem [CHECKPOINTS.md](CHECKPOINTS.md), CP6). Khi làm theo Exercise 3.1/3.2 trong `CODE_LAB.md`, bỏ các lệnh `cd ../../03-cloud-deployment/...` và chạy trong `06-lab-complete/` (Railway: `cd 06-lab-complete && railway up`; Railway CLI cài bằng `npm`, cần Node.js). Agent cần Redis trên cloud: tạo một Redis trên nền tảng, đặt `REDIS_URL` của service agent trỏ tới nó, kiểm `/ready` trả 200 trước khi chụp ảnh. Dùng Render thì `render.yaml` nằm trong thư mục con và phải tự khai báo Redis; kẹt thì hỏi Lab Coach.
+3. **"Bảng Hợp đồng"** mà `CODE_LAB.md` và checklist nhắc tới là mục *Script chấm dựa vào những tiêu chí dưới đây* trong [06-lab-complete/README.md](06-lab-complete/README.md).
+4. **Exercise 5.5** (`05-scaling-reliability/production/test_stateless.py`) gọi `http://localhost:8080`: chạy sau khi đã `docker compose up --scale agent=3` ở Exercise 5.4.
+5. **Exercise 7.3** sửa `KNOWLEDGE_BASE` trong `06-lab-complete/benchmark-observability/develop/utils/mock_llm.py`. Stack Docker ở Part 7 Bước 2 dùng bản `production/utils/mock_llm.py`; muốn stack đó cũng đạt 100% thì chép phần đã sửa sang.
+6. **Lệnh eval** mặc định gọi `http://localhost:8000`. Agent v2 chạy ở cổng 8002 (Exercise 7.1) thì thêm `--url http://localhost:8002`.
 
 ---
 
