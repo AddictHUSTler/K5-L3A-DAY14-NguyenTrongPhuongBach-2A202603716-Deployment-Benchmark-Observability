@@ -72,7 +72,7 @@
 - [x] Dashboard Grafana khi đang có tải (thấy rõ Golden Signals)
 - [x] Một trace chậm trong Jaeger (thấy span nào chiếm thời gian)
 - [x] Một trace lỗi trong Jaeger (có event `exception`)
-- [x] Trang Alerts của Prometheus với ít nhất 1 alert đang **firing**
+- [x] Trang Alerts của Prometheus với ít nhất 2 alert đang **firing**
 
 ### 4.2 Thí nghiệm "phá hệ thống"
 
@@ -88,7 +88,7 @@
 
 Metric hạ tầng (error rate, latency) vẫn xanh nên không alert nào bắt được. Phải chạy eval trên golden dataset định kỳ (cron/CI) và alert khi accuracy tụt dưới SLO 85%; thêm feedback của người dùng (thumbs up/down) và metric như retrieval hit ratio.
 
-Mỗi thí nghiệm A, B, D chạy riêng trên stack mới (`docker compose down -v` rồi `up`), tải Locust 30 user, baseline không có alert nào firing; thời gian đo bằng polling Prometheus mỗi 5 s từ lúc đổi cấu hình.
+Ảnh `screenshots/prometheus-alert-firing.png` chụp ở một lần chạy trước, khi lỗi và độ trễ cùng bật nên hai alert cùng firing trên một trang; thời gian firing trong bảng là từ các lần chạy riêng. Mỗi thí nghiệm A, B, D chạy riêng trên stack mới (`docker compose down -v` rồi `up`), tải Locust 30 user, baseline không có alert nào firing; thời gian đo bằng polling Prometheus mỗi 5 s từ lúc đổi cấu hình.
 
 Thí nghiệm D: pause 1 trong 2 instance, `AgentInstanceDown` (`up == 0`) firing sau 45 s trong khi alert error rate của agent vẫn không firing. Lần chạy này 30 request qua Nginx đều trả 200 (Nginx có `proxy_next_upstream` nên thử lại instance còn sống). Ở một lần chạy trước (baseline chưa sạch) mình thấy 1/20 request trả 504 từ Nginx: lỗi 504 sinh ra ở Nginx, request chưa được agent xử lý xong nên metric của agent không đếm. Vì vậy cần giám sát ở tầng load balancer hoặc synthetic check bên ngoài, chứ không chỉ metric của agent.
 
