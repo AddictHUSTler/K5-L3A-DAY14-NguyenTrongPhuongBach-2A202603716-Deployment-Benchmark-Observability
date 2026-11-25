@@ -15,11 +15,20 @@
 Lớp K5 làm khác `CODE_LAB.md` và `DAY14_DELIVERY_CHECKLIST.md` ở vài chỗ dưới đây. Đọc trước khi bắt đầu:
 
 1. **Code Part 6 nằm trong `06-lab-complete/`.** Làm ngay trong thư mục đó của bản fork. Bỏ qua cây thư mục `app/` ở gốc repo vẽ trong [DAY14_DELIVERY_CHECKLIST.md](DAY14_DELIVERY_CHECKLIST.md) mục 2.
-2. **Part 3 deploy luôn agent Part 6** (xem [CHECKPOINTS.md](CHECKPOINTS.md), CP6). Khi làm theo Exercise 3.1/3.2 trong `CODE_LAB.md`, bỏ các lệnh `cd ../../03-cloud-deployment/...` và chạy trong `06-lab-complete/` (Railway: `cd 06-lab-complete && railway up`; Railway CLI cài bằng `npm`, cần Node.js). Agent cần Redis trên cloud: tạo một Redis trên nền tảng, đặt `REDIS_URL` của service agent trỏ tới nó, kiểm `/ready` trả 200 trước khi chụp ảnh. Dùng Render thì `render.yaml` nằm trong thư mục con và phải tự khai báo Redis; kẹt thì hỏi Lab Coach.
-3. **"Bảng Hợp đồng"** mà `CODE_LAB.md` và checklist nhắc tới là mục *Script chấm dựa vào những tiêu chí dưới đây* trong [06-lab-complete/README.md](06-lab-complete/README.md).
-4. **Exercise 5.5** (`05-scaling-reliability/production/test_stateless.py`) gọi `http://localhost:8080`: chạy sau khi đã `docker compose up --scale agent=3` ở Exercise 5.4.
-5. **Exercise 7.3** sửa `KNOWLEDGE_BASE` trong `06-lab-complete/benchmark-observability/develop/utils/mock_llm.py`. Stack Docker ở Part 7 Bước 2 dùng bản `production/utils/mock_llm.py`; muốn stack đó cũng đạt 100% thì chép phần đã sửa sang.
-6. **Lệnh eval** mặc định gọi `http://localhost:8000`. Agent v2 chạy ở cổng 8002 (Exercise 7.1) thì thêm `--url http://localhost:8002`.
+2. **Windows: chạy Python trong WSL2** (Docker Desktop bật tích hợp WSL2). Chạy Python Windows, kể cả từ Git Bash, thì `check_production_ready.py` không gửi được SIGTERM, tiêu chí Graceful shutdown luôn ⚠️ và không bao giờ đạt `PASS 12/12`. Kiểm tra trong terminal làm bài: `python -c "import os; print(os.name)"` phải in `posix`.
+3. **Part 1 và Part 2: app bản develop nhận `question` qua query**, không nhận JSON (gửi JSON sẽ bị 422). Gọi bằng `curl -X POST "http://localhost:8000/ask?question=Hello"`. Các bản dùng chung cổng 8000: tắt server cũ (Ctrl+C hoặc dừng container) trước khi bật bản mới.
+4. **Part 2: build image từ gốc repo**, không `cd` vào thư mục con, vì Dockerfile `COPY` theo đường dẫn tính từ gốc:
+   `docker build -f 02-docker/develop/Dockerfile -t my-agent:develop .` và `docker build -f 02-docker/production/Dockerfile -t my-agent:advanced .`
+5. **Docker Compose ở Part 2 và Part 5 cần file `.env.local`.** Repo không có sẵn nên `docker compose up` báo thiếu file. Chạy `touch .env.local` trong `02-docker/production/` và `05-scaling-reliability/production/` (để trống cũng được, bài dùng mock LLM).
+6. **Part 4:**
+   - Bản develop: bật bằng `AGENT_API_KEY=secret-key-123 python app.py` để lệnh curl "có key" trong `CODE_LAB.md` khớp.
+   - Bản production (Exercise 4.2, 4.3): tắt bản develop trước (cùng cổng 8000), cài `requirements.txt` của thư mục đó. Lấy token ở `POST /auth/token` với tài khoản `student` / `demo123` (không phải `/token` và `admin`/`secret` như trong `CODE_LAB.md`); tài khoản này giới hạn 10 request/phút. Dùng token đó cho vòng lặp 4.3.
+   - Thêm `-i` vào curl để thấy mã HTTP (401 / 200 / 429) khi dán vào bài. Che token trước khi dán.
+7. **Part 5 (Exercise 5.4, 5.5):** stack trong `05-scaling-reliability/production/` mở cổng **8080**, endpoint là **`POST /chat`** (không phải cổng 80 và `/ask`). Chạy `docker compose up -d --scale agent=3` rồi `python test_stateless.py`. Script gửi 5 câu trong cùng một session rồi đọc history, không tự tắt instance nào. Xong thì `docker compose down` để trả cổng.
+8. **Part 3 deploy luôn agent Part 6** (xem [CHECKPOINTS.md](CHECKPOINTS.md), CP6). Khi làm theo Exercise 3.1/3.2 trong `CODE_LAB.md`, bỏ các lệnh `cd ../../03-cloud-deployment/...` và chạy trong `06-lab-complete/` (Railway: `cd 06-lab-complete && railway up`; Railway CLI cài bằng `npm`, cần Node.js). Agent cần Redis trên cloud: tạo một Redis trên nền tảng, đặt `REDIS_URL` của service agent trỏ tới nó, kiểm `/ready` trả 200 trước khi chụp ảnh. Dùng Render thì `render.yaml` nằm trong thư mục con và phải tự khai báo Redis; kẹt thì hỏi Lab Coach. Lệnh tự kiểm dùng bản ở CP6, không dùng mục Self-Test của checklist (mục đó gọi `GET /ask` nên ra 405 thay vì 401).
+9. **"Bảng Hợp đồng"** mà `CODE_LAB.md` và checklist nhắc tới là mục *Script chấm dựa vào những tiêu chí dưới đây* trong [06-lab-complete/README.md](06-lab-complete/README.md).
+10. **Exercise 7.3** sửa `KNOWLEDGE_BASE` trong `06-lab-complete/benchmark-observability/develop/utils/mock_llm.py`, rồi tắt và bật lại agent v2 (app không tự nạp lại code). Stack Docker ở Part 7 Bước 2 dùng bản `production/utils/mock_llm.py`; muốn stack đó cũng đạt 100% thì chép phần đã sửa sang.
+11. **Part 7: `load_test.py` và `run_eval.py` chỉ ghi file JSON khi có `--out`.** Lệnh eval mặc định gọi cổng 8000, agent v2 chạy ở 8002 thì thêm `--url http://localhost:8002`. Dùng các lệnh có sẵn tên file ở CP7 và CP8 trong [CHECKPOINTS.md](CHECKPOINTS.md).
 
 ---
 
