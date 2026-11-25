@@ -1,6 +1,6 @@
 # Rubric — Day 14: Deployment, Benchmark & Observability
 
-> Bài **cá nhân**. Điểm lấy từ [INSTRUCTOR_GUIDE.md](INSTRUCTOR_GUIDE.md) và [DAY14_DELIVERY_CHECKLIST.md](DAY14_DELIVERY_CHECKLIST.md), không đổi.
+> Bài **cá nhân**. Bảng điểm khớp [INSTRUCTOR_GUIDE.md](INSTRUCTOR_GUIDE.md) và [DAY14_DELIVERY_CHECKLIST.md](DAY14_DELIVERY_CHECKLIST.md).
 > **Tổng thô 120**, quy về thang 100: `Điểm = Tổng thô × 100 / 120` (làm tròn 0,5). **Đạt:** 70/100 (tương đương 84/120).
 > **Cách chấm:** mở link repo nộp trên LMS, chấm commit cuối trước deadline. Bước đầu tiên là chạy `python check_production_ready.py` trong `06-lab-complete/` trên máy có Docker.
 

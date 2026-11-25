@@ -1,9 +1,9 @@
 # Checkpoints — Day 14
 
 > 👤 **Cá nhân** · **4 giờ tại lớp** · Deadline: xem [SUBMISSION.md](SUBMISSION.md#deadline).
-> Nội dung từng bài tập giữ nguyên trong [CODE_LAB.md](CODE_LAB.md). File này chỉ chia giờ để vừa 4 tiếng và nói rõ mỗi mốc phải có gì.
+> Đề từng bài tập xem trong [CODE_LAB.md](CODE_LAB.md). File này chia giờ cho vừa 4 tiếng và nói rõ mỗi mốc phải có gì.
 
-`CODE_LAB.md` ghi tổng 335 phút (Part 1–7). Để vừa 240 phút, lịch dưới đây làm ba việc:
+Lộ trình trong `CODE_LAB.md` dài 335 phút (Part 1–7). Để vừa 240 phút, lớp K5 làm khác ba điểm:
 
 1. Rút ngắn Part 1, 2, 4, 5: chạy ví dụ có sẵn và trả lời câu hỏi vào `MISSION_ANSWERS.md`, không tự viết lại code mẫu.
 2. Đưa **Part 3 (deploy) ra sau Part 6** và deploy luôn agent Part 6, thay vì deploy app mẫu trong `03-cloud-deployment/` rồi deploy lại lần nữa. Exercise 3.3 (Cloud Run) là tuỳ chọn, bỏ qua.
