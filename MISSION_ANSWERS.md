@@ -291,6 +291,16 @@ PASS 12/12 - PRODUCTION READY!
 - URL: https://agent-n0nl.onrender.com
 - Screenshot: [dashboard](screenshots/dashboard.png), [test](screenshots/test.png)
 
+### `railway.toml` vs `render.yaml`
+I deployed to Render only; this compares the two config files in `06-lab-complete/`.
+- **Scope:** `railway.toml` configures one service (build with the Dockerfile, health check on `/health`, restart on failure). `render.yaml` is a Blueprint that describes the whole stack: the web service and the Redis (`keyvalue`) service, plus how they connect.
+- **Redis:** on Railway I would add Redis in the dashboard and copy its URL into `REDIS_URL` by hand. On Render the Blueprint creates it and wires `REDIS_URL` with `fromService`.
+- **Secrets:** `render.yaml` declares `AGENT_API_KEY` with `generateValue: true`, so the key is never in the repo. On Railway the variables are set in the dashboard or CLI, not in `railway.toml`.
+- **Why they differ:** Railway keeps the file minimal and manages the rest in its UI. Render's Blueprint is infrastructure as code, so one file recreates the entire deployment.
+
+### Exercise 3.3: Cloud Run pipeline (read only, not deployed)
+`cloudbuild.yaml` runs on a push to main and has four steps in order: (1) run `pytest`, (2) build the Docker image tagged with the commit SHA and `latest`, using the old `latest` as layer cache, (3) push the image to the container registry, (4) `gcloud run deploy` to Cloud Run in `asia-southeast1` with min 1 / max 10 instances and the API key from Secret Manager. Each step waits for the previous one, so a failing test stops the deploy. `service.yaml` is the same service as code: autoscaling 1–10 instances, 80 concurrent requests per instance, 512Mi memory, secrets from Secret Manager, `/health` as the liveness probe and `/ready` as the startup probe.
+
 ## Part 7: Benchmark & Observability (Bước 1, local)
 
 Số liệu đầy đủ: [BENCHMARK_REPORT.md](BENCHMARK_REPORT.md); file thô: `06-lab-complete/benchmark-observability/develop/reports/`.
