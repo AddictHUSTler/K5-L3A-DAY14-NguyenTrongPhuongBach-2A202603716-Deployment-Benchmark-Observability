@@ -282,3 +282,25 @@ PASS 12/12 - PRODUCTION READY!
 - Part 4: asked Claude Code to run the develop and production gateways and draft this section. The curl outputs are from those runs; I checked the line numbers in the code.
 - Part 5: asked Claude Code to run the develop app (health, ready, SIGTERM test) and the 3-instance compose stack with `test_stateless.py` and an instance-stop test, and draft this section. All outputs are from those runs.
 - Part 6: asked Claude Code to fill the `TODO`s in `06-lab-complete/` and run `check_production_ready.py`. I read each file and the script output; the result above is from that run.
+
+## Part 3: Cloud Deployment
+
+### Exercise 3.2: Render deployment (agent from `06-lab-complete/`)
+- URL: https://TODO.onrender.com
+- Screenshot: [dashboard](screenshots/dashboard.png), [test](screenshots/test.png)
+
+## Part 7: Benchmark & Observability (Bước 1, local)
+
+Số liệu đầy đủ: [BENCHMARK_REPORT.md](BENCHMARK_REPORT.md); file thô: `06-lab-complete/benchmark-observability/develop/reports/`.
+
+### Exercise 7.1 — Metrics
+1. Counter: `http_requests_total`, `llm_tokens_total` (chỉ tăng). Gauge: `agent_in_flight_requests`, `agent_info` (lên xuống). Histogram: `http_request_duration_seconds_bucket`, `llm_request_duration_seconds_bucket`, `agent_question_length_chars_bucket`.
+2. Dùng `request.url.path` thì mỗi URL lạ (`/wp-admin`, `/.env`, `/a1b2c3`…) tạo một series label mới → cardinality bùng nổ, Prometheus tốn RAM/disk và truy vấn chậm. `route.path` (hoặc `unmatched`) giữ số series cố định.
+3. Đã thêm Histogram `agent_question_length_chars` trong `develop/app.py` (observe `len(body.question)` trong `ask()`); kiểm tra bằng `curl /metrics`: `_count 1.0`, `_sum 40.0` sau 1 câu hỏi 40 ký tự.
+
+### Exercise 7.2 — Load test & SLO
+Bảng concurrency 1/10/50/100 và so sánh `MOCK_SLOW_RATE` 0/0.03/0.1 nằm ở mục 2 của `BENCHMARK_REPORT.md`. avg chỉ tăng nhẹ vì ~97% request vẫn nhanh, còn p99 nằm đúng ở nhóm 3% request chậm +1500 ms. SLO đặt theo p95/p99 (và error rate), không theo avg.
+
+### Exercise 7.3 — Eval & quality gate
+- v1 4.3%, v2 91.3%, v2 sau sửa KB 100% (0 regression, `Quality gate ✅ PASS`). Hai câu sai ban đầu (`security-02`, `scaling-03`) và cách sửa: mục 3 của `BENCHMARK_REPORT.md`; sửa trong `develop/utils/mock_llm.py`.
+- CI: [.github/workflows/eval.yml](.github/workflows/eval.yml) chạy agent v2 rồi `run_eval.py --min-accuracy 0.85`. Script thoát exit code 1 khi accuracy dưới ngưỡng hoặc có regression, nên job fail và PR bị chặn merge (khi bật branch protection yêu cầu check này).
